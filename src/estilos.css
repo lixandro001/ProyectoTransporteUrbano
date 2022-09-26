@@ -1,0 +1,99 @@
+*{
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'Gentona';
+    src: url(./wwwroot/fonts/gentona/Gentona-Book.woff2) format('woff2'), url(./wwwroot/fonts/gentona/Gentona-Book.woff) format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gentona--bold';
+    src: url(./wwwroot/fonts/gentona/Gentona-Bold.woff2) format('woff2'), url(./wwwroot/fonts/gentona/Gentona-Bold.woff) format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gentona-italic';
+    src: url(./wwwroot/fonts/gentona/Gentona-BookItalic.woff2), url(./wwwroot/fonts/gentona/Gentona-BookItalic.woff) format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+body{
+    background: #ffffff url(./wwwroot/images/Imagen-de-fondo-html.jpg) repeat scroll left top !important;
+    font-family: Gentona !important;
+}
+
+main{
+    width: 100%;/*max-width: 1500px;
+    
+    margin: auto;*/
+    pad: 40px;
+}
+
+.Card-burger__mobile {
+    width: 30px;
+    height: 3px;
+    background: #414042;
+
+    /*opacity: 1;
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+    opacity: 1;
+    position: relative;
+    display: block;
+    margin: 0 auto;*/
+}
+
+.Container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* max-width: 200px; */
+}
+
+.modal-content {
+    height: 95% !important;
+}
+
+
+
+.checkbox {
+    display: inline-block; /* set to `inline-block` as `inline elements ignore `height` and `width`*/
+    height: 15px;
+    width: 15px;
+    background: #fff;
+    border: 1px #ddd solid;
+    margin-right: 4px;
+    border-radius: 2px;
+}
+.checkbox--active {
+    border-color: blue;
+    background: yellow;
+}
+
+.estiloDocumento_vineta {
+    padding-left:"20px";
+}
+
+.estiloDocumento_noVisible {
+    visibility:hidden;
+    display:none;
+}
+
+.blocked {
+    background: #e9ecef;
+    opacity: 1;
+    font-size: 1rem;
+    /* font-weight: 500; */
+    line-height: 1.5;
+}
+
+.negrita {
+    font-family : 'Gentona--bold'!important;
+}

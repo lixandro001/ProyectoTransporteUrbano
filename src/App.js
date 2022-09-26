@@ -1,26 +1,67 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 
-function App() {
+
+import Ficha from './componentes/Ficha';
+import Login from './Login';
+import Registro from './componentes/Registro';
+import UploaderDocument from './componentes/UploaderDocument';
+ 
+import VerPdf from './componentes/VerPdf';
+import Conductor  from './componentes/Conductor';
+import Vehiculo from './componentes/Vehiculo';
+import Asignacion from './componentes/Asignacion';
+import Horarios from './componentes/Horarios';
+
+const App = () =>{
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+{/*       <Helmet>
+        <title>Login</title>
+      </Helmet> */}
+      <BrowserRouter>
+      <div>
+        <main>
+          <Routes  >
+              <Route path="/" element={<Login />}/>  
+              <Route path="/ficha" element={
+              <Ficha
+                guid_oportunidad = {''}
+              />
+            }
+            />   
+              <Route path="/registrado" element={
+              <Registro
+                ficha_matricula = {''}
+                urlapi = {''}
+                usuarioAct = {''}
+              />
+            }/>
+              <Route path="/UploaderDocument" element={
+              <UploaderDocument
+                guid = {''}
+                idTipoDoc = {''}
+                tipoDoc = {''}
+/*              ficha_matricula = {''}
+                urlapi = {''}
+                usuarioAct = {''} */
+              />
+            }/>
+
+            {/* <Route path="/ficha" element={<Ficha guid_oportunidad = {''}/>} */}
+           
+            <Route path="/VerPdf" element={<VerPdf   guid_oportunidad = {''} />} />
+            <Route path="/Conductor" element={<Conductor   guid_oportunidad = {''} />} />
+            <Route path="/Vehiculo" element={<Vehiculo   guid_oportunidad = {''} />} />
+            <Route path="/Asignacion" element={<Asignacion   guid_oportunidad = {''} />} />
+            <Route path="/Horarios" element={<Horarios   guid_oportunidad = {''} />} />
+             
+          </Routes>
+        </main>      
+      </div>
+      </BrowserRouter>
+    </>
+
   );
 }
-
 export default App;

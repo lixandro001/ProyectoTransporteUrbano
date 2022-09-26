@@ -1,0 +1,12 @@
+.contentProgress{
+  background-color: transparent !important;
+  box-shadow: unset !important;
+}
+
+#idDialogProgress > .MuiDialog-container > .MuiDialog-paper{
+margin: 100px;
+position: relative;
+overflow-y: auto;
+background-color: transparent !important ;
+box-shadow: unset !important;
+}
