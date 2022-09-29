@@ -1,18 +1,26 @@
 import React, { useRef,useEffect, useState, useContext } from 'react';
 import { Label, SelectSkin } from '../elementos/FormFicha';
 
-const ComponenteSelectSexo = ({estilo, placeholder, handleSex,validator, esobligatorio,guidSexo}) => {
+const ComponenteSelectSexo = ({estilo, placeholder, handleSexo,validator, esobligatorio,guidSexo}) => {
 
 const [Sexo, setSexo]= useState({guid: (guidSexo ? guidSexo : '') })
 
     useEffect(() => {        
-
-        if(handleSex!=undefined)
+        if(handleSexo!=undefined)
         {
-            handleSex(Sexo.guid);
-        }
-        
+            handleSexo(Sexo.guid);
+        }  
     }, [Sexo]);
+
+
+    // const handleSexo = (guidSexo, nombre_doc, numero_doc) => {
+    //     setDocumento({ codigo: guidSexo, nombre: nombre_doc, numero: numero_doc });
+    //   }
+
+    useEffect(() => {
+        handleSexo(Sexo.guid, Sexo.nombre, Sexo.numero);
+      }, [Sexo]);
+    
 
     useEffect(() => {        
         setSexo({ guid: (guidSexo != '' || guidSexo != null ? guidSexo:'') });
@@ -30,6 +38,8 @@ const [Sexo, setSexo]= useState({guid: (guidSexo ? guidSexo : '') })
             break;
         }
     }
+
+    console.log(Sexo.guid);
 
    return (
       

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useRef } from 'react'
 import { Row, Col, Badge } from 'react-bootstrap'
 import { Link } from "react-router-dom";
 import { Titulo, Formulario, FormularioGrid, Label, InputRadio, Wrapper, Item, RadioButton, RadioButtonLabel, InputCheck, ContenedorTerminos, ContenedorBotonCentrado, BotonAmarillo, BotonGris, MensajeExito, MensajeError, MensajeDocumentos } from '../elementos/FormFicha';
@@ -14,11 +14,14 @@ import { Footer } from '../elementos/Footers';
 import moment from 'moment';
 import DatePicker from 'react-date-picker';
 import ComponenteSelectSexo from './SelectSexo';
+import SimpleReactValidator from 'simple-react-validator';
+import Modal from 'react-bootstrap/Modal';
+import { BotonAmarilloModal, BotonGrisModal, TextoRojoModal } from '../elementos/FormModal';
 
 const baseUrlGDO = process.env.REACT_APP_URL_API_GDO;
 const apiKeyGDO = process.env.REACT_APP_APIKEY_GDO;
 
-const Vehiculo = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, handleVistas, handleCargaMatrizDocumento, beneficiosEconomicos, sololectura }) => {
+const Vehiculo = ({ usuarios }) => {
   const [docs, setDocs] = useState([]);
   const [SS, setSS] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,107 +37,81 @@ const Vehiculo = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, han
   const [value, onChange] = useState(new Date());
   const today = new Date();
   const [NavegacionRetroceder, setNavegacionRetroceder] = useState(false);
-  const obtenerTipoDocs = async () => {
-    setLoading(true);
-    let url = baseUrlGDO + "api/oportunidades/" + guid_oportunidad + '/' + guid_sub_modalidad_ingreso
+  const [errMsg, setErrMsg] = useState('');
+  const [ModeloNew, setModeloNew] = useState('');
+  const [PlacaNew, setPlacaNew] = useState('');
+  const [FechadeCompraNew, setFechadeCompraNew] = useState('');
+  const [SerieNew, setSerieNew] = useState('');
+  const [successRegistro, setSuccessRegistro] = useState(false);
+   
+  usuarios = localStorage.getItem("user");
 
-    const requestTipoDocs = await axios.get(url,
-      {
-        headers: { 'Content-Type': 'application/json', 'Authorization': apiKeyGDO },
-        withCredentials: true
-      }).catch((err) => {
-        setcargaExitosa(false);
-        console.log("No existe una matriz configurada para la modalidad de ingreso");
-        setLoading(false);
-      })
-      ;
-    const data = await requestTipoDocs.data
-    const document = data.detail.documentos
-     
-     
-
-    if (document == null) {
-      setcargaExitosa(false);
-    }
-
-    let fullDocs = []
-    for (let doc in data.detail.documentos) {
-      fullDocs.push(doc)
-    }
-
-    let arreglo = []
-    fullDocs.map((item, index) => {
-      arreglo.push({ id: item, data: document[item] })
-    })
-    setDocs(arreglo)
-    const IdDocumentosOcultos = DocumentosOcultos2.map(function (x) {
-      return x.id;
-    });
-
-    let DataCorrecta = '';
-
-    if (sololectura == true) {
-      DataCorrecta = arreglo.filter(e => e.data.estado.id != 2 && e.data.estado.id != 3
-        && ((true && e.data.requerido_para_beneficio) || (e.data.requerido_para_matricula))
-        && !IdDocumentosOcultos.includes((e.data.id).toString()));
-    } else {
-      DataCorrecta = arreglo.filter(e => e.data.estado.id == 1
-        && ((true && e.data.requerido_para_beneficio) || (e.data.requerido_para_matricula))
-        && !IdDocumentosOcultos.includes((e.data.id).toString()));
-    }
+  SimpleReactValidator.addLocale('es', {
+    accepted: ':attribute debe ser aceptado.',
+    after: ':attribute debe ser una fecha posterior a :date.',
+    after_or_equal: ':attribute debe ser una fecha posterior o igual a :date.',
+    alpha: ':attribute sólo debe contener letras.',
+    array: ':attribute debe ser un conjunto.',
+    before: ':attribute debe ser una fecha anterior a :date.',
+    before_or_equal: ':attribute debe ser una fecha anterior o igual a :date.',
+    between: ':attribute tiene que estar entre :min - :max:type.',
+    boolean: 'El campo :attribute debe tener un valor verdadero o falso.',
+    date: ':attribute no es una fecha válida.',
+    date_equals: ':attribute debe ser una fecha igual a :date.',
+    email: ':attribute no es un correo válido',
+    in: ':attribute es inválido :values.',
+    integer: ':attribute debe ser un número entero.',
+    max: 'El :attribute no debe ser mayor a :max carácteres.',
+    min: 'El :attribute debe ser de al menos :min carácteres.',
+    not_in: ':attribute es inválido :values.',
+    not_regex: 'El formato del campo :attribute no es válido.',
+    numeric: 'El :attribute debe ser numérico.',
+    regex: 'El formato de :attribute es inválido.',
+    required: 'El campo :attribute es obligatorio.',
+    size: 'El tamaño de :attribute debe ser :size:type.',
+    string: 'El campo :attribute debe ser una cadena de caracteres.',
+    url: 'El formato :attribute es inválido.',
+  });
 
 
-    DataCorrecta.map(item => {
-      let isRequired = false;
-
-      var arrayParentGroup = DataCorrecta.filter(e => e.data.matriz_grupo.id == item.data.matriz_grupo.id_matriz_grupo_padre && e.data.id != item.data.id && (e.data.versiones.abierta != null ? e.data.versiones.abierta.adjuntos : e.data.versiones.cerrada.adjuntos) > 0);
-
-      var arrayGroup = DataCorrecta.filter(e => e.data.matriz_grupo.id == item.data.matriz_grupo.id && e.data.id != item.data.id && (e.data.versiones.abierta != null ? e.data.versiones.abierta.adjuntos : e.data.versiones.cerrada.adjuntos) > 0);
-
-      let cantidadAdjuntos = (item.data.versiones.abierta != null ? item.data.versiones.abierta.adjuntos : item.data.versiones.cerrada.adjuntos)
-
-      if (cantidadAdjuntos == 0) {
-        if (arrayParentGroup.length > 0){
-          isRequired = false;
-        }
-        else if (arrayGroup.length > 0) {
-          isRequired = false;
-
-        } else {
-          isRequired = true;
-        }
-      }
-      else {
-        isRequired = false;
-      }
-
-      item.isRequired = (isRequired == true ? '' : isRequired);
-    }
-    )
+  const [, forceUpdate] = useState();
+  const validator = useRef(new SimpleReactValidator({ locale: 'es', autoForceUpdate: { forceUpdate: forceUpdate } }))
  
-    setSS(DataCorrecta);
-    setLoading(false);
+   
 
+  async function enviarRegistro() {
+    setLoading(true);
+      const response = await axios.post(baseUrlGDO + 'api/Conductor/agregar-vehiculo',
+      JSON.stringify({
+        usuario: usuarios,
+        modelo: ModeloNew,
+        placa: PlacaNew,
+        fechaCompra: FechadeCompraNew,
+        serie: SerieNew,
+        
+        }),
+        {
+          headers: { 'Content-Type': 'application/json'},
+          withCredentials: false
+        }
+       
+      ).catch(function (err) {
+        setSuccessRegistro(false)
+        if (err.response) {
+          setErrMsg(err.response.data.message);
+        } else if (err.request) {
+          setErrMsg('Ha ocurrido un error al registrar la ficha de postulación. Porfavor intente nuevamente');
+        } else {
+          setErrMsg('Ha ocurrido un error al registrar la ficha de postulación. Porfavor intente nuevamente');
+        }
+      });
+        console.log(response); 
+        const accessToken = response?.data?.accessToken;
+        setSuccessRegistro(true);
+     setLoading(false);
   }
 
-  const adjuntarDocumentos = (id, nombre, url) => {
-    handleVistas(id, nombre, url, true)
-  }
 
-  var idGrupo2 = 0;
-  var sscontador = 0;
-  let mostrarBadgeGrupo = false;
-  let badgeColors = ["primary", "success", "warning", "info", "secondary", "light", "dark", "danger"];
-
-  useEffect(() => {
-    obtenerTipoDocs()
-    idGrupo2 = 0;
-  }, [])
-
-
-//   useEffect(() => {
-//     handleCargaMatrizDocumento(cargaExitosa);
-//   }, [cargaExitosa])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -143,59 +120,72 @@ const Vehiculo = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, han
       handleShow();
     }
     else {
-
       validator.current.showMessages();
     //   forceUpdate(1)
       setactivarBoton(true)
     }
   }
 
-  const handleDeclaracion = (event) => {
-    const value = event.target.value;
-    let checked = event.target.checked;
-    checked = (checked == true ? checked : '');
-    setPostDeclaracion(
-      datosDeclaracion.map(item =>
-        item.id == value
-          ? { ...item, isChecked: checked }
-          : item));
+  function enviarFuncionAceptar() {
+    enviarRegistro()
   }
 
-  const retroceder = async (e) => {
-    setNavegacionRetroceder(true);
+  const handleChange = (e) => {
+    switch (e.target.id) {
+      case 'Modelo':
+        setModeloNew(e.target.value);
+        break;
+
+        case 'Placa':
+          setPlacaNew(e.target.value);
+          break; 
+         
+        case 'FechadeCompra':
+            setFechadeCompraNew(e.target.value);
+            break; 
+        
+        case 'Serie':
+              setSerieNew(e.target.value);
+              break; 
+       
+         default:
+      break;
+    }
   }
+
+   const retroceder = async (e) => {
+    setNavegacionRetroceder(true);
+   }
 
     if (NavegacionRetroceder) {
     return <Navigate to="/Ficha" /> 
+   }
+
+
+   if (successRegistro == true) {
+    return <Navigate to="/Ficha" />;
   }
-
-  const WarningBanner = (props) => {
-    if (parseInt(idGrupo2) != props.item.matriz_grupo.id) {
-      idGrupo2 = props.item.matriz_grupo.id;
-      if (SS.filter(e => e.data.matriz_grupo.id == props.item.matriz_grupo.id).length > 1) {
-        sscontador++;
-        mostrarBadgeGrupo = true;
-      }
-      else {
-        mostrarBadgeGrupo = false;
-      };
-    }
-
-
-    return (
-      <div>{mostrarBadgeGrupo == true ? <Badge bg={badgeColors[sscontador]}> Grupo {sscontador} </Badge> : ""}
-      </div>
-    )
-
-  }
-
-
 
   return (
     <>
       {
           <div>
-          
+            showModal ? (
+           <Modal show={showModal} onHide={handleClose}>
+             <Modal.Header /*closeButton*/ >
+               <Modal.Title>¿Estás seguro que la información ingresada es correcta?</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>Asegúrate de completar tus datos correctamente en base a la información de tu DNI</Modal.Body>
+             <Modal.Footer>
+               <BotonGrisModal type="submit" onClick={handleClose}  /* onClick={handleCancelar} */>Cancelar</BotonGrisModal>
+               <BotonAmarilloModal
+                 disabled={activarBoton}
+                 onClick={enviarFuncionAceptar}
+                 style={activarBoton == true ? { backgroundColor: '#ccc' } : { backgroundColor: '#ffc107' }}
+               >Aceptar
+               </BotonAmarilloModal>
+             </Modal.Footer>
+           </Modal>  
           <Container style={{ 'margin-top': '8rem' }}>
             <Titulo>
               NUEVO VEHICULO
@@ -210,19 +200,26 @@ const Vehiculo = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, han
                         <ComponenteInput
                           tipo="text"
                           label="Modelo"
-                        //   placeholder={datoUsuario.nombre_sede}
+                          placeholder={''}
                           name="Modelo"
+                          onChange={handleChange}
+                          value={ModeloNew}
                         />
- 
+               {validator.current.message('Modelo', ModeloNew, 'required', { className: "text-danger" })}
                       </Col>
+ 
+
                       <Col sm={6}>
                         <ComponenteInput
                           tipo="text"
                           label="Placa"
-                        //   placeholder={datoUsuario.nombre_campania}
+                          placeholder={''}
                           name="Placa"
+                          onChange={handleChange}
+                          value={PlacaNew}
                         />
-                         
+                 {validator.current.message('Placa', PlacaNew, 'required', { className: "text-danger" })}
+         
                       </Col>
                  
                       <Col sm={6}>
@@ -230,9 +227,12 @@ const Vehiculo = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, han
                         <ComponenteInput
                           tipo="date"
                           label="Fecha de Compra"
-                          //   placeholder={datoUsuario.nombre_carrera}
-                          name="Fecha de Compra"
+                          placeholder={''}
+                          name="FechadeCompra"
+                          onChange={handleChange}
+                          value={FechadeCompraNew}
                         />
+                  {validator.current.message('Fecha de Compra', FechadeCompraNew, 'required', { className: "text-danger" })}
                             </div>
                          </Col>
  
@@ -242,9 +242,13 @@ const Vehiculo = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, han
                         <ComponenteInput
                           tipo="text"
                           label="Serie"
-                        //   placeholder={datoUsuario.nombre_submodalidad_ingreso}
+                          placeholder={''}
                           name="Serie"
+                          onChange={handleChange}
+                          value={SerieNew}
                         />
+                   {validator.current.message('Serie', SerieNew, 'required', { className: "text-danger" })}
+               
                       </Col>
                     </Row> 
 

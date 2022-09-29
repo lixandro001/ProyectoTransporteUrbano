@@ -10,6 +10,7 @@ import {
   BotonAmarillo,
   BotonAzul,
 } from "./elementos/FormFicha";
+ import ProgressIntoDialog from '../src/componentes/Progress/Progress';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { Footer } from "./elementos/Footers";
@@ -21,9 +22,12 @@ import { useSearchParams } from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import companyLogo from "./logo/etuchisa.jpg";
 import { BotonGrisModal } from "./elementos/FormModal";
+ 
 
 const baseUrlGDO = process.env.REACT_APP_URL_API_GDO;
 const Login = () => {
+
+  const [loading, setLoading] = useState(false);
   const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
@@ -34,17 +38,15 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  var guid_oportunidad = searchParams.get("guid");
-  var usuarios = searchParams.get("usuarioAdministrativo"); //6a1d2667-1929-ec11-b6e6-0022483751cf
-  var version_crm = searchParams.get("crm");
-
+ 
+   
   useEffect(() => {
     setErrMsg("");
   }, [user, pwd]);
 
  
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -60,6 +62,10 @@ const Login = () => {
       const expireAt = response.expires_at;
       localStorage.setItem("token", token);
       localStorage.setItem("expireAt", expireAt);
+      localStorage.setItem("user",user);
+      const valoruser =localStorage.getItem("user");
+      //setGuID(guid_oport);
+      setUsuarios(valoruser);
       setSuccess(true);
     } catch (err) {
       setSuccess(false);
@@ -74,11 +80,13 @@ const Login = () => {
       }
       errRef.current.focus();
     }
+    setLoading(false);
   };
 
   if (success == true) {
     return <Navigate to="/ficha" />;
   }
+ 
 
   return (
     <>
@@ -143,8 +151,12 @@ const Login = () => {
             </Footer>
           </BodyLogin>
         </>
+        
       )}
+        <ProgressIntoDialog open={loading} />
     </>
+    
   );
+  
 };
 export default Login;

@@ -49,18 +49,14 @@ import ImagenAsignacion from './imagenes/asignacion.jpg';
 
 const baseUrlCRM = process.env.REACT_APP_URL_API_CRM;
 const baseUrlGDO = process.env.REACT_APP_URL_API_GDO;
-const FICHA_URL = '/fichas_matricula';
-const apiKeyGDO = process.env.REACT_APP_APIKEY_GDO;
-const apiKeyCRM = process.env.REACT_APP_APIKEY_CRM;
-const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
-
-  guid_oportunidad = localStorage.getItem("GUID");
-  version_crm = localStorage.getItem("version_crm");
-  usuarios = localStorage.getItem("user");
-
+ 
+ 
+const Ficha = ({  }) => {
+ 
+   
+  
   const errRef = useRef();
   const [loading, setLoading] = useState(false);
-
   const [idFichaMatricula, setFichaMatricula] = useState(null);
   const [edadActual, setedadActual] = useState(0);
   const [valorTipoFicha, setvalorTipoFicha] = useState(0);
@@ -109,7 +105,7 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
 
   var ImgRegistro = require('./../wwwroot/images/img-upn2.png');
   
- 
+  var usuarios = localStorage.getItem("user");
 
   SimpleReactValidator.addLocale('es', {
     accepted: ':attribute debe ser aceptado.',
@@ -141,7 +137,9 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
   const [, forceUpdate] = useState();
   const validator = useRef(new SimpleReactValidator({ locale: 'es', autoForceUpdate: { forceUpdate: forceUpdate } }))
 
-  
+  useEffect(() => {
+    setErrMsg("");
+  }, [usuarios]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -156,9 +154,7 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
       setactivarBoton(true)
     }
   }
- 
-   
-
+  
   function limpiartInputInformacionLaboral() {
     setRazonSocialTrabNew('')
     setRucTrabNew('')
@@ -212,7 +208,7 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
   if(NavegaConductor){
     return <Navigate 
     to="/Conductor"
-    guid_oportunidad={guid_oportunidad}
+     
     // validator={validator}
     guid_sub_modalidad_ingreso={datoUsuario.guid_submodalidad_ingreso}
     handleVistas={handleVistas} 
@@ -224,7 +220,7 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
   if(NavegaVehiculo){
     return <Navigate 
     to="/Vehiculo"
-    guid_oportunidad={guid_oportunidad}
+     
     // validator={validator}
     guid_sub_modalidad_ingreso={datoUsuario.guid_submodalidad_ingreso}
     handleVistas={handleVistas} 
@@ -236,7 +232,7 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
   if(NavegaAsignacion){
     return <Navigate 
     to="/Asignacion"
-    guid_oportunidad={guid_oportunidad}
+     
     // validator={validator}
     guid_sub_modalidad_ingreso={datoUsuario.guid_submodalidad_ingreso}
     handleVistas={handleVistas} 
@@ -248,7 +244,7 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
   if(NavegaHorario){
     return <Navigate 
     to="/Horarios"
-    guid_oportunidad={guid_oportunidad}
+   
     // validator={validator}
     guid_sub_modalidad_ingreso={datoUsuario.guid_submodalidad_ingreso}
     handleVistas={handleVistas} 
@@ -257,27 +253,16 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
   /> 
   }
 
-   
+
    
   
-  function getAge(dateString) {
-    var today = new Date();
-    var birthDate = new Date(dateString);
-    var age = today.getFullYear() - birthDate.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { age--; }
-    return age;
-  }
- 
-
   return (
     <>
       {
             <div>
               <Helmet>
                 <title>Menú</title>
-              </Helmet>
-               
+              </Helmet> 
                   <div style={vistaCargaDocumento.visible == true ? { 'display': 'none' } : { 'display': 'block' }}>
                     <Header> </Header>
                      
@@ -413,12 +398,19 @@ const Ficha = ({ guid_oportunidad, usuarios, version_crm }) => {
                           </Card.Body>
                         </Card>
                     
+
+                        <ContenedorBotonCentrado>
+                       
+                                <BotonGris as='button' type='submit' onClick={retroceder}>Cancelar</BotonGris>
+                                
+                              </ContenedorBotonCentrado>
+
                       </Formulario>
                       <Footer><p>© 2022 Aplicativo Movil</p></Footer>
                     </Container>
                   </div>
               
-              )}
+           
               <ProgressIntoDialog open={loading} />
             </div>
           
