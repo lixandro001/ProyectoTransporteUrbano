@@ -31,6 +31,12 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Swal from 'sweetalert2';
 import TablePagination from '@material-ui/core/TablePagination';
 import searchFill from '@iconify-icons/eva/search-fill';
+import close from '@iconify-icons/eva/close-circle-outline';
+import edit from '@iconify-icons/eva/edit-2-fill';
+import Modal from 'react-bootstrap/Modal';
+import { BotonAmarilloModal, BotonGrisModal, TextoRojoModal } from '../elementos/FormModal';
+import ComponenteSelectSexo from './SelectSexo';
+import Ruta from './Ruta';
   
 const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -51,7 +57,7 @@ const useStyles = makeStyles({
 const baseUrlGDO = process.env.REACT_APP_URL_API_GDO;
 const apiKeyGDO = process.env.REACT_APP_APIKEY_GDO;
   
-const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, handleVistas, handleCargaMatrizDocumento, beneficiosEconomicos, sololectura }) => {
+const Asignacion = ({   usuarios }) => {
    const classes = useStyles();    
   const [docs, setDocs] = useState([]);
   const [SS, setSS] = useState([]);
@@ -77,148 +83,67 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [NameCall, setNameCall] = React.useState('');
   const [ListUser, setListUser] = React.useState([]);
+  const [Listadatos, setPost] = useState([]);
+  const [DataObjeto,setDataObjeto]= useState([]);
+  const [DataObjetoVehiculos,setDataObjetoVehiculos]= useState([]);
+  const [successRegistro, setSuccessRegistro] = useState(false);
+  const [SuccessRegistroHorario, setSuccessRegistroHorario] = useState(false);
+   
+
+  const [errMsg, setErrMsg] = useState('');
+  const [tipoPoliticaPersonales,settipoPoliticaPersonales]=useState('');
+  const [esobligatoriounvalor,setesobligatoriounvalor]=useState(false);
+
+  const [idConductoeData,setidConductoeData]= React.useState('');
+  const [nombreConductor,setnombreConductor]= React.useState('');
+  const [IdVehiculoData,setIdVehiculoData]= React.useState('');
+  const [nombreVehiculo,setnombreVehiculo]= React.useState('');
+
+  const [dniconductor,setdniconductor]= React.useState('');
+  const [licenciaconductor,setlicenciaconductor]= React.useState('');
+
+  const [Documento, setDocumento] = useState({ codigo: '', nombre: '', numero: '' });
+  const [SexoNew,setSexoNew]=useState('');
+
+  const [RutaNew,setRuta]=useState({codigo:'',nombreHorario:''});
+
+
+  const [checklunes,setchecklunes]= React.useState(false);
+  const [checkmartes,setcheckmartes]= React.useState(false);
+  const [checkmiercoles,setcheckmiercoles]= React.useState(false);
+  const [checkjueves,setcheckjueves]= React.useState(false);
+  const [checkviernes,setcheckviernes]= React.useState(false);
+  const [checksabado,setchecksabado]= React.useState(false);
+  const [checkdomingo,setcheckdomingo]= React.useState(false);
+  
+ 
+
+  usuarios = localStorage.getItem("user");
+
 
   const rows = [
     createData('1', 'Edwin', '561615616', 'Activo'),
   ];
   
-
   function createData(name, calories, fat, carbs) {
     return { name, calories, fat, carbs };
   }
-  
-  
-
+   
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-
-  const obtenerTipoDocs = async () => {
-    setLoading(true);
-    let url = baseUrlGDO + "api/oportunidades/" + guid_oportunidad + '/' + guid_sub_modalidad_ingreso
-
-    const requestTipoDocs = await axios.get(url,
-      {
-        headers: { 'Content-Type': 'application/json', 'Authorization': apiKeyGDO },
-        withCredentials: true
-      }).catch((err) => {
-        setcargaExitosa(false);
-        console.log("No existe una matriz configurada para la modalidad de ingreso");
-        setLoading(false);
-      })
-      ;
-    const data = await requestTipoDocs.data
-    const document = data.detail.documentos
-     
-
-    function handleClick() {
-        setNewRegister(true);
-      }
-  
-      const ShowDialogMessage = (message) =>{
-        setShow(true);
-        setMessageError(message);
-      }
-  
-      function handleClickSweet() {
-        GetListUser();
-      }
-  
-      const handleClickEdit = (e) =>{
-        setIdEdit(e.currentTarget.id);
-        setEditRegister(true);
-      }
-  
-     
-
-    if (document == null) {
-      setcargaExitosa(false);
-    }
-
-    let fullDocs = []
-    for (let doc in data.detail.documentos) {
-      fullDocs.push(doc)
-    }
-
-    let arreglo = []
-    fullDocs.map((item, index) => {
-      arreglo.push({ id: item, data: document[item] })
-    })
-    setDocs(arreglo)
-    const IdDocumentosOcultos = DocumentosOcultos2.map(function (x) {
-      return x.id;
-    });
-
-    let DataCorrecta = '';
-
-    if (sololectura == true) {
-      DataCorrecta = arreglo.filter(e => e.data.estado.id != 2 && e.data.estado.id != 3
-        && ((true && e.data.requerido_para_beneficio) || (e.data.requerido_para_matricula))
-        && !IdDocumentosOcultos.includes((e.data.id).toString()));
-    } else {
-      DataCorrecta = arreglo.filter(e => e.data.estado.id == 1
-        && ((true && e.data.requerido_para_beneficio) || (e.data.requerido_para_matricula))
-        && !IdDocumentosOcultos.includes((e.data.id).toString()));
-    }
-
  
-   
-    DataCorrecta.map(item => {
-      let isRequired = false;
-
-      var arrayParentGroup = DataCorrecta.filter(e => e.data.matriz_grupo.id == item.data.matriz_grupo.id_matriz_grupo_padre && e.data.id != item.data.id && (e.data.versiones.abierta != null ? e.data.versiones.abierta.adjuntos : e.data.versiones.cerrada.adjuntos) > 0);
-
-      var arrayGroup = DataCorrecta.filter(e => e.data.matriz_grupo.id == item.data.matriz_grupo.id && e.data.id != item.data.id && (e.data.versiones.abierta != null ? e.data.versiones.abierta.adjuntos : e.data.versiones.cerrada.adjuntos) > 0);
-
-      let cantidadAdjuntos = (item.data.versiones.abierta != null ? item.data.versiones.abierta.adjuntos : item.data.versiones.cerrada.adjuntos)
-
-      if (cantidadAdjuntos == 0) {
-        if (arrayParentGroup.length > 0){
-          isRequired = false;
-        }
-        else if (arrayGroup.length > 0) {
-          isRequired = false;
-
-        } else {
-          isRequired = true;
-        }
-      }
-      else {
-        isRequired = false;
-      }
-
-      item.isRequired = (isRequired == true ? '' : isRequired);
-    }
-    )
- 
-    setSS(DataCorrecta);
-    setLoading(false);
-
-  }
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const adjuntarDocumentos = (id, nombre, url) => {
-    handleVistas(id, nombre, url, true)
-  }
-
+ 
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  var idGrupo2 = 0;
-  var sscontador = 0;
-  let mostrarBadgeGrupo = false;
-  let badgeColors = ["primary", "success", "warning", "info", "secondary", "light", "dark", "danger"];
-
-
-  const showErrorMessage = (msg) => {
-  
-  }
-
+   
   const StyledTableRow = withStyles((theme) => ({
     root: {
       '&:nth-of-type(odd)': {
@@ -227,102 +152,207 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
     },
   }))(TableRow);
 
-  useEffect(() => {
-    obtenerTipoDocs()
-    idGrupo2 = 0;
-  }, [])
-
-  const entries =0;
-
-  const GetListUser = () =>{
-    const URL_BASE = process.env.REACT_APP_URL_BASE;
-    let GET_User = process.env.REACT_APP_API_GET_LISTUSER;
-    let URL = URL_BASE+GET_User+NameCall;
-    const tokenLocalStorage = localStorage.getItem(process.env.REACT_APP_KEY_TOKEN)
-    try{
-        fetch(URL,{
-            method:'get',
-            mode: 'cors',
-            headers: {
-                'Accept':'application/json',
-                'Authorization': 'Bearer ' + tokenLocalStorage,
-                'Content-type': 'application/json'
-            }                
-        }).then(function(res){
-
-            return res.json();
-        }).then(function(response){
-
-            if(response.Code === 0){
-                setListUser(response.Data.ListaDetail)
-
-            }else if (response.Code === 1){
-                var message = "";
-                if(response.Data.Errors.length > 0){
-                    response.Data.Errors.forEach(element => {
-                        message = `${element}.`
-                    });
-                    showErrorMessage(message);                        
-                }
-
-            }else if (response.Code === 2){
-                var message = "";
-                if(response.Data.Errors.length > 0){
-                    response.Data.Errors.forEach(element => {
-                        message = `${element.FieldName}. ${element.Message}. `
-                    });
-                    showErrorMessage(message);                        
-                }
-            }
-
-        }).catch((error) =>{
-            console.log(error);
-        })
-    }catch(e){
-        console.log(e);
-    }
-}
  
+
+  function obtenerRegistro(page = '1',query = '') {
+    const data = {
+      query,
+      page
+    };
+    setLoading(true);
+    var auth = {
+      headers: { 'Content-Type': 'application/json'}
+    };
+    const params = `query=${data.query}&page=${data.page}`;
+    // axios('get', `${URL.produc}/categoria/listado-categoria?${params}`, true)
+    axios.get(baseUrlGDO + `api/Conductor/listado-conductor?${params}`, true)
+      .then(response => {
+        var docs = response.data
+        console.log(docs); 
+        // Se determina el tipo de ficha y el titulo dependiendo de la version del CRM
+        // validator.current.purgeFields();  
+        console.log(docs.entries); 
+        setDataObjeto(docs.entries);
+        setLoading(false);
+        return response.data;
+      })
+      .catch(err => {
+      });
+  }
+
+
+  function obtenerRegistroVehiculos(page = '1',query = '') {
+    const data = {
+      query,
+      page
+    };
+    setLoading(true);
+    var auth = {
+      headers: { 'Content-Type': 'application/json'}   
+    };
+    const params = `query=${data.query}&page=${data.page}`;
+    // axios('get', `${URL.produc}/categoria/listado-categoria?${params}`, true)
+    axios.get(baseUrlGDO + `api/Conductor/listado-vehiculo?${params}`, true)
+      .then(response => {
+        var docs = response.data
+        console.log(docs); 
+        // Se determina el tipo de ficha y el titulo dependiendo de la version del CRM
+        // validator.current.purgeFields();  
+        console.log(docs.entries); 
+        setDataObjetoVehiculos(docs.entries);
+        setLoading(false);
+        return response.data;
+      })
+      .catch(err => {
+      });
+  }
+
+
+   
   const handleKeyPress = ({ target }) => {
     const query = target.value;
     const page = '1';
     if (query.length >= 0) {
-    //   dispatch(getCategoriaList(page, query));
+      obtenerRegistro(page, query);
     } else {
-    //   dispatch(getCategoriaList(page, query));
+      obtenerRegistro(page, query);
     }
   };
 
+
+  const handleKeyPressVehiculo =({target})=>{
+    const query = target.value;
+    const page = '1';
+    if (query.length >= 0) {
+      obtenerRegistroVehiculos(page, query);
+    } else {
+      obtenerRegistroVehiculos(page, query);
+    }
+  }
+
+
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validator.current.allValid()) {
-      setactivarBoton(false);
-      handleShow();
+    e.preventDefault();   
+  }
+
+ 
+
+
+  const handleclickEditar = async (e) => {
+     
+    const IdConductord = e.currentTarget.id;
+    const nombreConductord = e.currentTarget.name;
+  
+    setidConductoeData(IdConductord);
+    setnombreConductor(nombreConductord);
+  
+    try { 
+      if (IdConductord.length>0 && IdVehiculoData.length>0) {
+        setactivarBoton(true);
+        handleShow();
+        //enqueueSnackbar(message, { variant: 'success' });
+       if(idConductoeData.length>0 && IdVehiculoData.length>0){
+        setactivarBoton(false);
+        handleShow();
+       }else{
+        setactivarBoton(true);
+       }
+         
+      } else {
+      }
+    } catch (error) {
+      console.error(error);
     }
-    else {
+  };
 
-      validator.current.showMessages();
-    //   forceUpdate(1)
-      setactivarBoton(true)
-    }
+
+    
+  const handleclickEditarVehiculo = async (e) => {
+    const IdVehiculo= e.currentTarget.id;
+    const nombreVehiculo = e.currentTarget.name;
+    setIdVehiculoData(IdVehiculo);
+    setnombreVehiculo(nombreVehiculo);
+    console.log(IdVehiculo);
+    console.log(nombreVehiculo);
+    // try { 
+      
+    // } catch (error) {
+    //   console.error(error);
+    // }
+  };
+ 
+  function enviarFuncionAceptar() {
+     enviarRegistroAsignacion()
   }
 
-  const handleDeclaracion = (event) => {
-    const value = event.target.value;
-    let checked = event.target.checked;
-    checked = (checked == true ? checked : '');
-    setPostDeclaracion(
-      datosDeclaracion.map(item =>
-        item.id == value
-          ? { ...item, isChecked: checked }
-          : item));
+  async function enviarRegistroAsignacion() {
+    setLoading(true);
+      const response = await axios.post(baseUrlGDO + 'api/Conductor/asignar-vehiculos',
+      JSON.stringify({
+        idvehiculo: IdVehiculoData,
+        idconductor: idConductoeData,
+        duenoVehiculo: esobligatoriounvalor     
+        }),
+        {
+          headers: { 'Content-Type': 'application/json'},
+          withCredentials: false
+        }
+       
+      ).catch(function (err) {
+        setSuccessRegistro(false)
+        if (err.response) {
+          setErrMsg(err.response.data.message);
+        } else if (err.request) {
+          setErrMsg('Ha ocurrido un error al registrar la ficha de postulación. Porfavor intente nuevamente');
+        } else {
+          setErrMsg('Ha ocurrido un error al registrar la ficha de postulación. Porfavor intente nuevamente');
+        }
+      });
+        console.log(response);
+        enviarRegistroAsignacionFechasDias();
+        setSuccessRegistro(true);
+       
+     setLoading(false);
   }
+ 
+  async function enviarRegistroAsignacionFechasDias() {
+    setLoading(true);
+      const response = await axios.post(baseUrlGDO + 'api/Conductor/agregar-asignacion-horarios-dias',
+      JSON.stringify({
 
-
-  function handleClickSweet() {
-    GetListUser();
+          IdUsuario: usuarios,
+          IdConductor: parseInt(idConductoeData),
+          lunes: checklunes,
+          martes: checkmartes,
+          miercoles: checkmiercoles,
+          jueves: checkjueves,
+          viernes: checkviernes,
+          sabado: checksabado,
+          domingo: checkdomingo
+  
+        }),
+        {
+          headers: { 'Content-Type': 'application/json'},
+          withCredentials: false
+        }
+       
+      ).catch(function (err) {
+        setSuccessRegistroHorario(false)
+        if (err.response) {
+          setErrMsg(err.response.data.message);
+        } else if (err.request) {
+          setErrMsg('Ha ocurrido un error al registrar la ficha de postulación. Porfavor intente nuevamente');
+        } else {
+          setErrMsg('Ha ocurrido un error al registrar la ficha de postulación. Porfavor intente nuevamente');
+        }
+      });
+        console.log(response);
+       
+        setSuccessRegistroHorario(true);
+     setLoading(false);
   }
-
+ 
+  
   const retroceder = async (e) => {
     setNavegacionRetroceder(true);
   }
@@ -331,14 +361,184 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
     return <Navigate to="/Ficha" /> 
   }
 
- 
+  const handleRuta = (codigo, nombre) => {
+    setRuta({ codigo:codigo, nombre:nombre});
+  }
+
+
+  const handleRadioButtonPoliticas = (event) => {
+    const value = event.target.value;
+     
+    settipoPoliticaPersonales(value);
+         if (value == 1) {
+          setesobligatoriounvalor(true);
+         } else if (value == 2) {
+          setesobligatoriounvalor(false);
+         }
+  };
+
+  const handleChangelunes = (event) => {
+   console.log(event.target.checked);    
+   setchecklunes(event.target.checked);
+  };
+  const handleChangemartes = (event) => {
+    console.log(event.target.checked);    
+    setcheckmartes(event.target.checked);
+   };
+   const handleChangemiercoles = (event) => {
+    console.log(event.target.checked);    
+    setcheckmiercoles(event.target.checked);
+   };
+   const handleChangejueves = (event) => {
+    console.log(event.target.checked);    
+    setcheckjueves(event.target.checked);
+   };
+   const handleChangeviernes = (event) => {
+    console.log(event.target.checked);    
+    setcheckviernes(event.target.checked);
+   };
+   const handleChangesabado = (event) => {
+    console.log(event.target.checked);    
+    setchecksabado(event.target.checked);
+   };
+   const handleChangedomingo = (event) => {
+    console.log(event.target.checked);    
+    setcheckdomingo(event.target.checked);
+   };
+   
+
+  if (successRegistro == true) {
+    return <Navigate to="/ficha" />;
+  }
+
+  
+console.log(DataObjeto)
  
 
   return (
     <>
       {
-          <div>
-          
+          <div>   
+            <Modal show={showModal} onHide={handleClose}>
+             <Modal.Header /*closeButton*/ >
+               <Modal.Title>Esta Seleccionando al Conductor : ({nombreConductor}) para asignarlo al vehiculo con N° de Placa :({nombreVehiculo})</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>
+               
+                 <Col sm={6}>
+                 <h2> Datos del Conductor : </h2>  
+                 {nombreConductor}
+                 </Col>
+
+                 <Col sm={6}>
+                 <h2> Datos del Vehiculo  : </h2>  
+                 {nombreVehiculo}
+                 </Col>
+                 <br /> <br />
+                 
+                 <label>
+                   LUNES:  
+                  <input  
+                  name="lunes"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangelunes}
+                   />
+                 </label>
+
+       
+        <br />
+        <label>
+                   MARTES:
+                  <input
+                  name="martes"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangemartes}
+                   />
+                 </label>
+        <br />
+        <label>
+                   MIERCOLES:
+                  <input
+                  name="miercoles"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangemiercoles}
+                   />
+                 </label>
+        <br />
+        <label>
+                   JUEVES:
+                  <input
+                  name="jueves"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangejueves}
+                   />
+                 </label>
+        <br />
+        <label>
+                   VIERNES:
+                  <input
+                  name="viernes"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangeviernes}
+                   />
+                 </label>
+        <br />
+        <label>
+                  SABADO:
+                  <input
+                  name="sabado"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangesabado}
+                   />
+                 </label>
+        <br />
+        <label>
+                  DOMINGO:
+                  <input
+                  name="domingo"
+                  type="checkbox"
+                  // checked={}
+                  onChange={handleChangedomingo}
+                   />
+                 </label>
+                  <br /><br /><br />
+       
+ 
+                            <Col sm={4}>
+                               <Ruta
+                                 label="Ruta"
+                                 placeholder="--SELECCIONE--"
+                                 name="Ruta"
+                                 handleRuta={handleRuta}
+                                 value={RutaNew}
+                                 urlapi={baseUrlGDO + "api/Conductor/listado-rutas-combo"}
+                                 // handleHorario={handleHorario}
+                                 //guidSexo={datoUsuario.codigo_genero}
+                                // validator={validator}
+                                 //esobligatorio={true}
+                               />
+                             </Col> 
+                              
+             </Modal.Body>
+             <br />
+                         
+             <Modal.Footer>
+               <BotonGrisModal type="submit" onClick={handleClose}  /* onClick={handleCancelar} */>Cancelar</BotonGrisModal>
+               <BotonAmarilloModal
+                 disabled={activarBoton}
+                 onClick={enviarFuncionAceptar}
+                 style={activarBoton == true ? { backgroundColor: '#ccc' } : { backgroundColor: '#ffc107' }}
+               >Aceptar
+               </BotonAmarilloModal>
+             </Modal.Footer>
+           </Modal>    
+
           <Container style={{ 'margin-top': '8rem' }}>
             <Titulo>
             ASIGNACION
@@ -371,33 +571,32 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
                             <Grid item xs={1} style={{paddingBottom:5, textAlign:'left'}}>
                             </Grid>
                             </Grid>
-
-
                             <Grid container >
-                        
                             <Grid item xs={6} >
-                      
                             <Table className={classes.table} aria-label="customized table">
-
                             <TableHead>
-                            <TableRow>
-                             
+                            <TableRow>         
                                 <StyledTableCell align="left">DNI</StyledTableCell>
                                 <StyledTableCell align="left">NOMBRE Y APELLIDO</StyledTableCell>
-                                
+                                <StyledTableCell align="left">ACCION</StyledTableCell>           
                             </TableRow>
                             </TableHead>
-
                             <TableBody>
                                 {
-                                ListUser.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element,key) =>
+                                DataObjeto.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element,index) =>
                                 <StyledTableRow>
-                                <StyledTableCell component="th" scope="row">
-                                    {element.CompanyName}
-                                </StyledTableCell>
-                                <StyledTableCell align="left">{element.UserLogin}</StyledTableCell>
-                                <StyledTableCell align="left">{element.FullName}</StyledTableCell>
-                                
+                                <StyledTableCell align="left">{element.dni}</StyledTableCell>
+                                <StyledTableCell align="left">{element.apellido +' '+ element.nombreCompleto}</StyledTableCell>
+                                <Button 
+                                  id={element.idConductor}
+                                  name={element.apellido +' '+ element.nombreCompleto +' con N° DNI: '+ element.dni +' y N° Licencia:'+ element.numeroLicencia}
+                                   
+                                  onClick={(e) => handleclickEditar(e)}
+                                  className="Seleccionar"
+                                >
+                                  <Icon width={40} height={40} icon={edit} />
+                                </Button>
+
                                 </StyledTableRow>
                                 )}
                                 {emptyRows > 0 && (
@@ -431,7 +630,7 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
                            <OutlinedInput
                                 className={classes.search}
                                 // value={valueBuscador}
-                                onChange={handleKeyPress}
+                                onChange={handleKeyPressVehiculo}
                                 placeholder="Buscar Vehiculo..."
                                 startAdornment={
                                 <InputAdornment position="start">
@@ -451,28 +650,30 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
 
 
                             <Grid container >
-                        
                             <Grid item xs={6} >
-                      
                             <Table className={classes.table} aria-label="customized table">
-
                             <TableHead>
-                            <TableRow>
-                             
+                            <TableRow> 
                                 <StyledTableCell align="left">N° Placa</StyledTableCell>
-                            
+                                <StyledTableCell align="left">Serie</StyledTableCell>
+                                <StyledTableCell align="left">ACCION</StyledTableCell>       
                             </TableRow>
                             </TableHead>
-
                             <TableBody>
                                 {
-                                ListUser.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element,key) =>
+                                DataObjetoVehiculos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element,key) =>
                                 <StyledTableRow>
-                                <StyledTableCell component="th" scope="row">
-                                    {element.CompanyName}
-                                </StyledTableCell>
-                                <StyledTableCell align="left">{element.UserLogin}</StyledTableCell>
-                                <StyledTableCell align="left">{element.FullName}</StyledTableCell>
+                                <StyledTableCell align="left">{element.placa}</StyledTableCell>
+                                <StyledTableCell align="left">{element.serie}</StyledTableCell>
+
+                                <Button
+                                  id={element.idVehiculo}
+                                  name={element.placa +' con N° Serie: '+element.serie +' y modelo : '+ element.modelo }
+                                  onClick={(e) => handleclickEditarVehiculo(e)}
+                                  className="Seleccionar"
+                                >
+                                  <Icon width={40} height={40} icon={edit} />
+                                </Button>
                                 
                                 </StyledTableRow>
                                 )}
@@ -502,29 +703,20 @@ const Asignacion = ({ guid_oportunidad, guid_sub_modalidad_ingreso, validator, h
                     <br /><br /><br /> 
 
 
-                    <Col sm={6}>
-                             
-                             <center>
-                             <p>Es Dueño del Vehiculo?</p>
-                             <div className="card-block card-cuerpo">
-                                         <div className="row check-contenedor">
-                                           <div className="col-sm-12 custom-control custom-checkbox">
-                                             
-                                             <input type="checkbox" id={'chkDeclaracion_' } name={'chkDeclaracion_' }
-                                               onChange={(event) => handleDeclaracion(event)}
-                                             />
- 
-                                             <label
-                                               className="custom-control-label d-inline" htmlFor={'chkDeclaracion_'}
-                                             >
-                                             </label>
-                                             {/* {validator.current.message('declaracion ' + files.id, files.isChecked, 'required', { className: "text-danger" })} */}
-                                           </div>
-                                         </div>
-                            </div>
-                             </center>
                          
-                         </Col>
+                                   <Col sm={6}>
+                                     <Item>
+                                      <RadioButton
+                                        type="radio"
+                                        name="radio"
+                                        value="1"
+                                        checked={tipoPoliticaPersonales === "1"}
+                                        onChange={(event) => handleRadioButtonPoliticas(event)}
+                                        />
+                                       <RadioButtonLabel />
+                                      <div>¿Es Dueño del Vehiculo?</div>
+                                     </Item>
+                                   </Col>
                   </Card.Text>
                 </Card.Body>
               </Card>
