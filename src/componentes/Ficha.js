@@ -24,6 +24,7 @@ import moment from 'moment';
 import Registro from './Registro';
 import Documentos from './Documentos';
  
+ 
 
 import '../estilos.css';
 import ProgressIntoDialog from '../componentes/Progress/Progress';
@@ -39,7 +40,7 @@ import { Radio } from '@material-ui/core';
 
 import ImagenConductor from './imagenes/icono-del-conductor.jpg';
 import ImagenBus from './imagenes/bus.jpg';
-import ImagenHorarios from './imagenes/horarios.jpg';
+ 
 import ImagenBuzon from './imagenes/buzon.jpg';
 import ImagenColaboradore from './imagenes/colaboradores.jpg'; 
 import ImagenAlerta from './imagenes/alertas.jpg'; 
@@ -101,7 +102,7 @@ const Ficha = ({  }) => {
   const [valorChecket,setvalorChecket]=useState(false);
   const [valorChecket2,setvalorChecket2]=useState(false);
 
-  const [Horarios,setHorarios]=useState({codigo:'',nombreHorario:''});
+ 
 
   var ImgRegistro = require('./../wwwroot/images/img-upn2.png');
   
@@ -200,9 +201,7 @@ const Ficha = ({  }) => {
     setNavegaAsignacion(true);
    }
 
-   const IrHorarios =async(e)=>{
-    setNavegaHorario(true);
-   }
+   
 
 
   if(NavegaConductor){
@@ -241,17 +240,7 @@ const Ficha = ({  }) => {
   /> 
   }
 
-  if(NavegaHorario){
-    return <Navigate 
-    to="/Horarios"
    
-    // validator={validator}
-    guid_sub_modalidad_ingreso={datoUsuario.guid_submodalidad_ingreso}
-    handleVistas={handleVistas} 
-    // handleCargaMatrizDocumento={handleCargaMatrizDocumento}
-    beneficiosEconomicos={datoUsuario.submodalidad_tiene_beneficio_economico}
-  /> 
-  }
 
 
    
@@ -329,21 +318,7 @@ const Ficha = ({  }) => {
                                   </center>
                                 </Col>
 
-
-                                <Col sm={5}>
-                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Registrar Horarios</Card.Title>
-                                 <center>
-                                 <button className='btn btn-info btn-block' 
-                                          style={{ width: '190px', height:'140px' }}  
-                                          onClick={IrHorarios}> 
-                                          <img
-                                          src = {ImagenHorarios}
-                                          style={{ width: '190px', height:'140px' }} 
-                                          align-content= "center" /> 
-                                  </button> 
-                                 </center>
-                                </Col>
-                                <br />   <br /> 
+ 
                                 <Col sm={5}>
                                 <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Buzon de Usuarios</Card.Title>
                                 <center>

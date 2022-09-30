@@ -11,7 +11,7 @@ import VerPdf from './componentes/VerPdf';
 import Conductor  from './componentes/Conductor';
 import Vehiculo from './componentes/Vehiculo';
 import Asignacion from './componentes/Asignacion';
-import Horarios from './componentes/Horarios';
+ 
 
 const App = () =>{
   return (
@@ -54,7 +54,7 @@ const App = () =>{
             <Route path="/Conductor" element={<Conductor   guid_oportunidad = {''} />} />
             <Route path="/Vehiculo" element={<Vehiculo   guid_oportunidad = {''} />} />
             <Route path="/Asignacion" element={<Asignacion   guid_oportunidad = {''} />} />
-            <Route path="/Horarios" element={<Horarios   guid_oportunidad = {''} />} />
+          
              
           </Routes>
         </main>      
