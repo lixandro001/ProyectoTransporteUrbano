@@ -92,6 +92,9 @@ const Ficha = ({  }) => {
   const [NavegaVehiculo,setNavegaVehiculo]=useState(false);
   const [NavegaAsignacion,setNavegaAsignacion]=useState(false);
   const [NavegaHorario,setNavegaHorario]=useState(false);
+
+  const [NavegaBuzon,setNavegaBuzon]=useState(false);
+   
    
 
   const [vistaCargaDocumento, setvistaCargaDocumento] = useState({ id: '', nombre: '', url: '', visible: false });
@@ -201,7 +204,9 @@ const Ficha = ({  }) => {
     setNavegaAsignacion(true);
    }
 
-   
+   const IrBuzon = async(e)=>{
+    setNavegaBuzon(true);
+   }
 
 
   if(NavegaConductor){
@@ -240,6 +245,13 @@ const Ficha = ({  }) => {
   /> 
   }
 
+
+
+  if(NavegaBuzon){
+    return <Navigate 
+    to="/Buzon"
+    /> 
+  }
    
 
 
@@ -324,7 +336,7 @@ const Ficha = ({  }) => {
                                 <center>
                                   <button className='btn btn-info btn-block' 
                                           style={{ width: '190px', height:'140px' }}     
-                                          onClick={retroceder}> 
+                                          onClick={IrBuzon}> 
                                           <img
                                           src = {ImagenBuzon}
                                           style={{ width: '190px', height:'140px' }} 

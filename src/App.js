@@ -11,6 +11,7 @@ import VerPdf from './componentes/VerPdf';
 import Conductor  from './componentes/Conductor';
 import Vehiculo from './componentes/Vehiculo';
 import Asignacion from './componentes/Asignacion';
+import Buzon from './componentes/Buzon';
  
 
 const App = () =>{
@@ -55,7 +56,7 @@ const App = () =>{
             <Route path="/Vehiculo" element={<Vehiculo   guid_oportunidad = {''} />} />
             <Route path="/Asignacion" element={<Asignacion   guid_oportunidad = {''} />} />
           
-             
+            <Route path="/Buzon" element={<Buzon   guid_oportunidad = {''} />} />
           </Routes>
         </main>      
       </div>
