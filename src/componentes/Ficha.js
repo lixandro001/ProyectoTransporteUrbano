@@ -104,6 +104,7 @@ const Ficha = ({}) => {
   const [esobligatorioVal, setesobligatorioVal] = useState(true);
   const [esobligatoriounvalor, setesobligatoriounvalor] = useState("");
   const [NavegacionRetroceder, setNavegacionRetroceder] = useState(false);
+<<<<<<< HEAD
   const [NavegaConductor, setNavegaConductor] = useState(false);
   const [NavegaVehiculo, setNavegaVehiculo] = useState(false);
   const [NavegaAsignacion, setNavegaAsignacion] = useState(false);
@@ -115,6 +116,18 @@ const Ficha = ({}) => {
     url: "",
     visible: false,
   });
+=======
+  const [NavegaConductor,setNavegaConductor]=useState(false);
+  const [NavegaVehiculo,setNavegaVehiculo]=useState(false);
+  const [NavegaAsignacion,setNavegaAsignacion]=useState(false);
+  const [NavegaHorario,setNavegaHorario]=useState(false);
+
+  const [NavegaBuzon,setNavegaBuzon]=useState(false);
+   
+   
+
+  const [vistaCargaDocumento, setvistaCargaDocumento] = useState({ id: '', nombre: '', url: '', visible: false });
+>>>>>>> afc0feae1c11ccf1d9da01526b88270b8ee24423
   const [CargaMatrizDocumento, setCargaMatrizDocumento] = useState(true);
   const [GuidSubModalidad, setGuidSubModalidad] = useState();
   const [cargaExitosaSubModalidad, setcargaExitosaSubModalidad] = useState(
@@ -223,6 +236,7 @@ const Ficha = ({}) => {
 
   const IrAsignacion = async (e) => {
     setNavegaAsignacion(true);
+<<<<<<< HEAD
   };
 
   if (NavegaConductor) {
@@ -238,6 +252,25 @@ const Ficha = ({}) => {
         }
       />
     );
+=======
+   }
+
+   const IrBuzon = async(e)=>{
+    setNavegaBuzon(true);
+   }
+
+
+  if(NavegaConductor){
+    return <Navigate 
+    to="/Conductor"
+     
+    // validator={validator}
+    guid_sub_modalidad_ingreso={datoUsuario.guid_submodalidad_ingreso}
+    handleVistas={handleVistas} 
+    // handleCargaMatrizDocumento={handleCargaMatrizDocumento}
+    beneficiosEconomicos={datoUsuario.submodalidad_tiene_beneficio_economico}
+  /> 
+>>>>>>> afc0feae1c11ccf1d9da01526b88270b8ee24423
   }
 
   if (NavegaVehiculo) {
@@ -270,6 +303,7 @@ const Ficha = ({}) => {
     );
   }
 
+<<<<<<< HEAD
   return (
     <>
       {
@@ -491,6 +525,164 @@ const Ficha = ({}) => {
 
           <ProgressIntoDialog open={loading} />
         </div>
+=======
+
+
+  if(NavegaBuzon){
+    return <Navigate 
+    to="/Buzon"
+    /> 
+  }
+   
+
+
+   
+  
+  return (
+    <>
+      {
+            <div>
+              <Helmet>
+                <title>Menú</title>
+              </Helmet> 
+                  <div style={vistaCargaDocumento.visible == true ? { 'display': 'none' } : { 'display': 'block' }}>
+                    <Header> </Header>
+                     
+                    <Container style={{ 'margin-top': '8rem' }}>
+                      <Titulo>
+                        Menú
+                      </Titulo>
+
+                      <Formulario action="" onSubmit={handleSubmit}>
+                       
+                        <Card style={{ borderRadius: '0px', margin: '1rem' }}>
+                          <Card.Body style={{ padding: '0px' }}>
+                            <Card.Text style={{ padding: '1rem' }}>
+                              <Row>
+                                <Col sm={5}>
+                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Registrar Nuevo Conductor</Card.Title>
+                                 <center>
+                                 <button className='btn btn-info btn-block' 
+                                          style={{ width: '190px', height:'140px' }}  
+                                          onClick={IrConductor}> 
+                                          <img
+                                          src = {ImagenConductor}
+                                          style={{ width: '190px', height:'140px' }} 
+                                          align-content= "center" /> 
+                                  </button> 
+ 
+                                 </center>
+                                </Col>
+                                <br />   <br /> 
+                                <Col sm={5}>
+                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Registrar Nuevo Vehiculo</Card.Title>
+                                <center>
+                                  <button className='btn btn-info btn-block' 
+                                          style={{ width: '190px', height:'140px' }}     
+                                          onClick={IrVehiculo}> 
+                                          <img
+                                          src = {ImagenBus}
+                                          style={{ width: '190px', height:'140px' }} 
+                                          align-content= "center" /> 
+                                  </button> 
+                                  </center>
+                                </Col>
+                              </Row>
+                            </Card.Text>
+                          </Card.Body>
+                        </Card>
+
+                        <Card style={{ borderRadius: '0px', margin: '1rem' }}>
+                          <Card.Body style={{ padding: '0px' }}>
+                            <Card.Text style={{ padding: '1rem' }}>
+                              <Row>
+
+                              <Col sm={5}>
+                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Asignacion de Conductores a Vehiculos</Card.Title>
+                                <center>
+                                  <button className='btn btn-info btn-block' 
+                                          style={{ width: '190px', height:'140px' }}     
+                                          onClick={IrAsignacion}> 
+                                          <img
+                                          src = {ImagenAsignacion}
+                                          style={{ width: '190px', height:'140px' }} 
+                                          align-content= "center" /> 
+                                  </button> 
+                                  </center>
+                                </Col>
+
+ 
+                                <Col sm={5}>
+                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Buzon de Usuarios</Card.Title>
+                                <center>
+                                  <button className='btn btn-info btn-block' 
+                                          style={{ width: '190px', height:'140px' }}     
+                                          onClick={IrBuzon}> 
+                                          <img
+                                          src = {ImagenBuzon}
+                                          style={{ width: '190px', height:'140px' }} 
+                                          align-content= "center" /> 
+                                  </button> 
+                                  </center>
+                                </Col>
+                              </Row>
+                            </Card.Text>
+                          </Card.Body>
+                        </Card>
+
+                        <Card style={{ borderRadius: '0px', margin: '1rem' }}>
+                          <Card.Body style={{ padding: '0px' }}>
+                            <Card.Text style={{ padding: '1rem' }}>
+                              <Row>
+                                <Col sm={5}>
+                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Colaboradores</Card.Title>
+                                 <center>
+                                 <button className='btn btn-info btn-block' 
+                                          style={{ width: '190px', height:'140px' }}  
+                                          onClick={retroceder}> 
+                                          <img
+                                          src = {ImagenColaboradore}
+                                          style={{ width: '190px', height:'140px' }} 
+                                          align-content= "center" /> 
+                                  </button> 
+                                 </center>
+                                </Col>
+                                <br />   <br /> 
+                                <Col sm={5}>
+                                <Card.Title style={{ background: '#6c757d', color: '#fff', padding: '1rem', fontSize: '18px' }}>Alertas de Desvio</Card.Title>
+                                <center>
+                                  <button className='btn btn-info btn-block' 
+                                          style={{ width: '190px', height:'140px' }}     
+                                          onClick={retroceder}> 
+                                          <img
+                                          src = {ImagenAlerta}
+                                          style={{ width: '190px', height:'140px' }} 
+                                          align-content= "center" /> 
+                                  </button> 
+                                  </center>
+                                </Col>
+                              </Row>
+                            </Card.Text>
+                          </Card.Body>
+                        </Card>
+                    
+
+                        <ContenedorBotonCentrado>
+                       
+                                <BotonGris as='button' type='submit' onClick={retroceder}>Cancelar</BotonGris>
+                                
+                              </ContenedorBotonCentrado>
+
+                      </Formulario>
+                      <Footer><p>© 2022 Aplicativo Movil</p></Footer>
+                    </Container>
+                  </div>
+              
+           
+              <ProgressIntoDialog open={loading} />
+            </div>
+          
+>>>>>>> afc0feae1c11ccf1d9da01526b88270b8ee24423
       }
     </>
   );
